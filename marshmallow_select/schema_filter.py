@@ -22,14 +22,20 @@ class SchemaProjectionGenerator(object):
         return cfg
 
     def recurse_on_link_fields(self):
-        ret = {name: self.recurse_on_name(name) for name in self.link_field_names}
+        name_recursion_pairs = [(name, self.recurse_on_name(name))
+                                for name in self.link_field_names]
+        filtered_pairs = [(name, rec) for name, rec in name_recursion_pairs if rec]
+        ret = dict(filtered_pairs)
         return ret
 
     def recurse_on_name(self, name):
         cls = self.__class__
         next_schema = get_next_schema(self.schema, name)
         next_class = get_next_class(self.mapper, name)
-        return cls(next_schema(), next_class).config
+        if next_schema is None or next_class is None:
+            return None
+        else:
+            return cls(next_schema(), next_class).config
 
     @property
     def nonlink_field_names(self):
@@ -65,12 +71,14 @@ class SchemaProjectionGenerator(object):
 
 def get_next_schema(schema, name):
     field = schema.fields[name]
-    if type(field) is List:
+    if type(field) is List and type(field.container) is not Nested:
+        return None
+    elif type(field) is List:
         return field.container.nested
     elif type(field) is Nested:
         return field.nested
     else:
-        raise ValueError('zomg')
+        return None
 
 
 def get_next_class(mapper, name):
