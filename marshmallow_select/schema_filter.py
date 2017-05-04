@@ -2,7 +2,13 @@ from marshmallow.fields import (
     List,
     Nested
 )
-from sqlalchemy.orm import class_mapper
+from sqlalchemy.orm import (
+    joinedload,
+    defaultload,
+    noload,
+    load_only,
+    class_mapper
+)
 
 
 class SchemaProjectionGenerator(object):
