@@ -75,3 +75,40 @@ def get_next_schema(schema, name):
 
 def get_next_class(mapper, name):
     return mapper.relationships[name].mapper.class_
+
+
+def project_query(qry, cfg, opt_prefix=None, loader=defaultload):
+    def add_to_opt_prefix(old_prefix, new_name):
+        if old_prefix:
+            new_prefix = getattr(old_prefix, loader.__name__)(new_name)
+        else:
+            new_prefix = loader(new_name)
+        return new_prefix
+
+    def project_current_depth(qry, cfg, opt_prefix):
+        load_only_opt = cfg['load_only']
+        noload_opt = cfg['noload']
+
+        if opt_prefix:
+            qry = qry.options(opt_prefix.load_only(*load_only_opt))
+        else:
+            qry = qry.options(load_only(*load_only_opt))
+
+        for name in noload_opt:
+            if opt_prefix:
+                qry = qry.options(opt_prefix.noload(name))
+            else:
+                qry = qry.options(noload(name))
+
+        return qry
+
+    projected_qry = qry
+
+    for name, child_cfg in cfg['childs'].items():
+        child_opt_prefix = add_to_opt_prefix(opt_prefix, name)
+        projected_qry = project_query(projected_qry,
+                                      child_cfg,
+                                      child_opt_prefix)
+
+    projected_qry = project_current_depth(projected_qry, cfg, opt_prefix)
+    return projected_qry
