@@ -2,12 +2,8 @@
 marshmallow-select
 ******************
 
-Usage
-=====
-
-
 Declare Model.query
--------------------
+===================
 
 .. code-block:: python
     class BaseModel(object):
@@ -20,7 +16,7 @@ Declare Model.query
 
 
 Add the mixin
--------------
+=============
 
 .. code-block:: python
     from marshmallow_select import SchemaQueryMixin
@@ -31,7 +27,7 @@ Add the mixin
 
 
 Query with schemas
-------------------
+==================
 
 .. code-block:: python
     from schemas import UserSchema
