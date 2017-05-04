@@ -6,6 +6,7 @@ Declare Model.query
 ===================
 
 .. code-block:: python
+
     class BaseModel(object):
         @classmethod
         def query(cls):
@@ -19,6 +20,7 @@ Add the mixin
 =============
 
 .. code-block:: python
+
     from marshmallow_select import SchemaQueryMixin
 
 
@@ -30,6 +32,7 @@ Query with schemas
 ==================
 
 .. code-block:: python
+
     from schemas import UserSchema
     from models import User
 
