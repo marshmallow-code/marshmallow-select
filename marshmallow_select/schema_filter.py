@@ -112,3 +112,29 @@ def project_query(qry, cfg, opt_prefix=None, loader=defaultload):
 
     projected_qry = project_current_depth(projected_qry, cfg, opt_prefix)
     return projected_qry
+
+
+class SchemaQueryMixin(object):
+    @classmethod
+    def query(cls, schema):
+        raise NotImplementedError('cls.schema_query() requires cls.query()')
+
+    @classmethod
+    def schema_query(cls, schema, unlazify=False):
+        qry = cls.query()
+
+        if isinstance(schema, type):
+            schema_inst = schema()
+        else:
+            schema_inst = schema
+
+        projector = SchemaProjectionGenerator(schema_inst, cls)
+        projection_cfg = projector.config
+
+        if unlazify:
+            loader = joinedload
+        else:
+            loader = defaultload
+
+        new_qry = project_query(qry, projection_cfg, loader=loader)
+        return new_qry
