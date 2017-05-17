@@ -205,3 +205,7 @@ class SchemaQueryMixin(object):
 
         new_qry = project_query(qry, projection_cfg, loader=loader)
         return new_qry
+
+    @classmethod
+    def schema_join_query(cls, schema):
+        return cls.schema_query(schema, unlazify=True)
