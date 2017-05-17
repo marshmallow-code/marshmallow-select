@@ -50,3 +50,16 @@ Query with schemas
     # fetches everything, but in one single joined query, even if
     # fields of User (or fields of fields of user) are lazily-loaded
     joined_qry = User.schema_query(UserSchema, unlazify=True)
+
+
+TODO
+====
+
+0. Make default :code:`_base_query` if some sensible way of
+   discovering the session is available (e.g. user can register the
+   scoped_session obj or some other method of getting the current
+   session)
+
+1. Some simple way of detecting & reporting if the schema "covers" the
+   query (i.e. serializing with the schema will not produce additional
+   queries)
