@@ -21,7 +21,7 @@ class SchemaProjectionGenerator(object):
     @property
     def config(self):
         cfg = {
-            'load_only': self.nonlink_field_names,
+            'load_only': self.load_only_field_names,
             'noload': self.noload_link_field_names,
             'childs': self.recurse_on_link_fields()
         }
@@ -50,7 +50,17 @@ class SchemaProjectionGenerator(object):
 
     @property
     def noload_link_field_names(self):
+        names = self.basic_noload_link_field_names | self.renamed_attr_link_fields
+        return names
+
+    @property
+    def basic_noload_link_field_names(self):
         names = (self.class_link_field_names - self.schema_field_names)
+        return names
+
+    @property
+    def load_only_field_names(self):
+        names = self.nonlink_field_names | self.renamed_attr_nonlink_fields
         return names
 
     @property
@@ -73,6 +83,49 @@ class SchemaProjectionGenerator(object):
     @property
     def schema_field_names(self):
         return set(self.schema.fields.keys())
+
+    @property
+    def unaccounted_for_field_names(self):
+        """
+        Most field names are either the names of direct fields or link
+        fields. There are some other cases which require special
+        processing,
+        """
+        names = ((self.schema_field_names - self.class_nonlink_field_names) -
+                 self.class_link_field_names)
+        return names
+
+    @property
+    def renamed_attr_link_fields(self):
+        names = [name for field_type, name in self.find_renamed_attr_fields()
+                 if field_type == 'link']
+        return set(names)
+
+    @property
+    def renamed_attr_nonlink_fields(self):
+        names = [name for field_type, name in self.find_renamed_attr_fields()
+                 if field_type == 'nonlink']
+        return set(names)
+
+    def find_renamed_attr_fields(self):
+        result = [self.check_for_renamed_attr(name) for name
+                  in self.unaccounted_for_field_names]
+        renamed_fields = [(field_type, name) for field_type, name in result if name]
+        return renamed_fields
+
+    def check_for_renamed_attr(self, name):
+        schema_field = self.schema.fields[name]
+        field_attr = schema_field.attribute
+        # If there is no attr set in the schema class, this field is
+        # set to None
+        if not field_attr:
+            return False, None
+        elif field_attr in self.class_link_field_names:
+            return 'link', field_attr
+        elif field_attr in self.class_nonlink_field_names:
+            return 'nonlink', field_attr
+        else:
+            return False, None
 
 
 def get_next_schema(schema, name):
