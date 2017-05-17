@@ -130,12 +130,12 @@ def project_query(qry, cfg, opt_prefix=None, loader=defaultload):
 
 class SchemaQueryMixin(object):
     @classmethod
-    def query(cls, schema):
-        raise NotImplementedError('cls.schema_query() requires cls.query()')
+    def _base_query(cls, schema):
+        raise NotImplementedError('cls.schema_query() requires cls._base_query()')
 
     @classmethod
     def schema_query(cls, schema, unlazify=False):
-        qry = cls.query()
+        qry = cls._base_query()
 
         if isinstance(schema, type):
             schema_inst = schema()
