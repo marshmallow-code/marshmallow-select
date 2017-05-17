@@ -2,14 +2,14 @@
 marshmallow-select
 ******************
 
-Declare Model.query
+Declare Model._base_query
 ===================
 
 .. code-block:: python
 
     class BaseModel(object):
         @classmethod
-        def query(cls):
+        def _base_query(cls):
             return session.query(cls)
 
 
