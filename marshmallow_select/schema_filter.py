@@ -209,3 +209,26 @@ class SchemaQueryMixin(object):
     @classmethod
     def schema_join_query(cls, schema):
         return cls.schema_query(schema, unlazify=True)
+
+
+class SchemaFilter(object):
+    def __init__(self, schema, unlazify=False):
+        if isinstance(schema, type):
+            self.schema_inst = schema()
+        else:
+            self.schema_inst = schema
+
+        if unlazify:
+            self.loader = joinedload
+        else:
+            self.loader = defaultload
+
+    def __call__(self, qry, cls=None):
+        if not cls:
+            cls = qry._entity_zero().class_
+
+        projector = SchemaProjectionGenerator(self.schema_inst, cls)
+        projection_cfg = projector.config
+
+        new_qry = project_query(qry, projection_cfg, loader=self.loader)
+        return new_qry
