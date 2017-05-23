@@ -151,6 +151,12 @@ def get_next_class(mapper, name):
 
 
 def project_query(qry, cfg, opt_prefix=None, loader=defaultload):
+    """
+    BFSs through config tree modifying query
+
+    opt_prefix is a path from the root of up to the child we are about
+    to modify.
+    """
     def add_to_opt_prefix(old_prefix, new_name):
         if old_prefix:
             new_prefix = getattr(old_prefix, loader.__name__)(new_name)
