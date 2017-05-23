@@ -11,7 +11,7 @@ setup(
     name='marshmallow-select',
     package='marshmallow_select',
     description='make sqlalchemy select fields with marshmallow schemas',
-    version='0.0.0',
+    version='1.0.0',
     install_requires=REQUIRES,
     author='dmr',
     author_email='dmr@distribute.com',
