@@ -15,6 +15,7 @@ setup(
     install_requires=REQUIRES,
     author='dmr',
     author_email='dmr@distribute.com',
+    url='https://github.com/Distributd/marshmallow-select',
     # NOTE(dmr, 2017-05-03): I assume/hope versions 3.{4,5} work. I've only used 6.
     classifiers=[
         'Intended Audience :: Developers',
