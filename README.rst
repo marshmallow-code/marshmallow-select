@@ -34,6 +34,32 @@ Usage
     joined_qry = sf(qry)
 
 
+You can also filter nested fields
+
+.. code-block:: python
+
+    from marshmallow_select import SchemaFilter
+
+    from schemas import UserSchema, OrganizationSchema
+    from models import User
+
+    qry = User.some_query_method()
+
+
+    class ShortOrganizationSchema(OrganizationSchema):
+        class Meta:
+            fields = ['id', 'name']
+
+
+    class UserWithShortOrgSchema(UserSchema):
+        organization = Nested(ShortOrganizationSchema)
+
+
+    # Will join-load the user's org, but only fetch id & name
+    sf = SchemaFilter(UserWithShortOrgSchema())
+    new_qry = sf(qry)
+
+
 Notes
 =====
 
