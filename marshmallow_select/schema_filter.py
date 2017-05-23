@@ -181,36 +181,6 @@ def project_query(qry, cfg, opt_prefix=None, loader=defaultload):
     return projected_qry
 
 
-class SchemaQueryMixin(object):
-    @classmethod
-    def _base_query(cls, schema):
-        raise NotImplementedError('cls.schema_query() requires cls._base_query()')
-
-    @classmethod
-    def schema_query(cls, schema, unlazify=False):
-        qry = cls._base_query()
-
-        if isinstance(schema, type):
-            schema_inst = schema()
-        else:
-            schema_inst = schema
-
-        projector = SchemaProjectionGenerator(schema_inst, cls)
-        projection_cfg = projector.config
-
-        if unlazify:
-            loader = joinedload
-        else:
-            loader = defaultload
-
-        new_qry = project_query(qry, projection_cfg, loader=loader)
-        return new_qry
-
-    @classmethod
-    def schema_join_query(cls, schema):
-        return cls.schema_query(schema, unlazify=True)
-
-
 class SchemaFilter(object):
     def __init__(self, schema, unlazify=False):
         if isinstance(schema, type):
