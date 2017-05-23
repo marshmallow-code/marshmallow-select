@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 # NOTE(dmr, 2017-05-03): These are the versions I've actually used it
 # with; no idea what actual requirements are.
@@ -9,7 +9,7 @@ REQUIRES = (
 
 setup(
     name='marshmallow-select',
-    package='marshmallow_select',
+    packages=find_packages(),
     description='make sqlalchemy select fields with marshmallow schemas',
     version='1.0.1',
     install_requires=REQUIRES,
