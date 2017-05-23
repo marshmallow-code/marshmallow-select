@@ -2,6 +2,9 @@
 marshmallow-select
 ******************
 
+Use marshmallow schemas to generate select clauses for sqlalchemy
+queries.
+
 
 Usage
 =====
