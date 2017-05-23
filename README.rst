@@ -38,4 +38,5 @@ TODO
    query (i.e. serializing with the schema will not produce additional
    queries)
 
-1. unlazify doesn't appear to work 100% of the time; figure out why.
+1. unlazify doesn't appear to work 100% of the time; figure out why
+   (think I fixed this).
