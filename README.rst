@@ -37,3 +37,5 @@ TODO
 0. Some simple way of detecting & reporting if the schema "covers" the
    query (i.e. serializing with the schema will not produce additional
    queries)
+
+1. unlazify doesn't appear to work 100% of the time; figure out why.
