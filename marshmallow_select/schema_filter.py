@@ -21,6 +21,7 @@ class SchemaProjectionGenerator(object):
     @property
     def config(self):
         cfg = {
+            'reload': self.reload_field_names,
             'load_only': self.load_only_field_names,
             'noload': self.noload_link_field_names,
             'childs': self.recurse_on_link_fields()
@@ -42,6 +43,11 @@ class SchemaProjectionGenerator(object):
             return None
         else:
             return cls(next_schema(), next_class).config
+
+    @property
+    def reload_field_names(self):
+        names = (self.class_link_field_names - self.noload_link_field_names)
+        return names
 
     @property
     def nonlink_field_names(self):
@@ -155,6 +161,7 @@ def project_query(qry, cfg, opt_prefix=None, loader=defaultload):
     def project_current_depth(qry, cfg, opt_prefix):
         load_only_opt = cfg['load_only']
         noload_opt = cfg['noload']
+        reload_opt = cfg['reload']
 
         if opt_prefix:
             qry = qry.options(opt_prefix.load_only(*load_only_opt))
@@ -166,6 +173,10 @@ def project_query(qry, cfg, opt_prefix=None, loader=defaultload):
                 qry = qry.options(opt_prefix.noload(name))
             else:
                 qry = qry.options(noload(name))
+
+        for name in reload_opt:
+            reload_expr = add_to_opt_prefix(opt_prefix, name)
+            qry = qry.options(reload_expr)
 
         return qry
 
