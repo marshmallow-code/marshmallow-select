@@ -31,6 +31,12 @@ Usage
     joined_qry = sf(qry)
 
 
+Notes
+=====
+
+This code is semantically versioned. Just because it says "1.0.0"
+doesn't mean it's even vaguely production-ready.
+
 TODO
 ====
 
