@@ -122,7 +122,8 @@ Notes
 =====
 
 This code is semantically versioned. Just because it says "1.0.0"
-doesn't mean it's even vaguely production-ready.
+doesn't mean it's even vaguely production-ready. The fact that I'm
+using it in production doesn't mean you should.
 
 TODO
 ====
