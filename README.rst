@@ -157,7 +157,7 @@ Acknowledgements
 
 Originally written on behalf of Distribute_
 
-.. _Distribute: //:distribute.com
+.. _Distribute: //distribute.com
 
 .. image:: dtd_emblem.png
     :align: center
