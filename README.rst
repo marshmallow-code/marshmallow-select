@@ -145,4 +145,11 @@ LICENSE
 =======
 
 marshmallow-select is distributed under the terms of the WTFPL,
-version 2. See [COPYING]
+version 2. See [COPYING].
+
+WARRANTY
+========
+
+Users who believe that it's my fault if something that goes wrong with
+their software as a result of using this code should consult the case
+of `Arkell v. Pressdram`.
