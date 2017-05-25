@@ -151,7 +151,7 @@ LICENSE
 =======
 
 marshmallow-select is distributed under the terms of the WTFPL,
-version 2. See [COPYING].
+version 2. See [COPYING](COPYING).
 
 WARRANTY
 ========
