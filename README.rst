@@ -155,7 +155,9 @@ TODO
 Acknowledgements
 ================
 
-Originally written on behalf of [Distribute](//:distribute.com)
+Originally written on behalf of Distribute_
+
+.. _Distribute: //:distribute.com
 
 .. image:: dtd_emblem.png
     :align: center
