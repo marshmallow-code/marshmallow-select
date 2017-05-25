@@ -5,6 +5,12 @@ marshmallow-select
 Use marshmallow schemas to generate select clauses for sqlalchemy
 queries.
 
+Installation
+============
+
+See the [guide to pip installing from github
+repos](https://pip.pypa.io/en/stable/reference/pip_install/#vcs-support). I'll
+put it on pypi soon, I swear!
 
 Usage
 =====
