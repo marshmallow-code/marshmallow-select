@@ -103,6 +103,7 @@ attention of marshmallow-select without actually adding them to the
 list of output fields
 
 .. code-block:: python
+
     class UserSchema(Schema):
         full_name = String()
         first_name = Field(load_only=True)
