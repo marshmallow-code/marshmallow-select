@@ -152,6 +152,19 @@ TODO
    of our queries which involve explicit joins are aggregations), but
    might be useful to someone.
 
+Acknowledgements
+================
+
+Originally written on behalf of [Distribute](//:distribute.com)
+
+.. image:: dtd_emblem.png
+    :align: center
+    :alt: distribute logo
+
+You should totally check them out if you're in the wholesale
+purchasing|distribution space.
+
+
 LICENSE
 =======
 
