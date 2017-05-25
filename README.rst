@@ -8,9 +8,12 @@ queries.
 Installation
 ============
 
-See the [guide to pip installing from github
-repos](https://pip.pypa.io/en/stable/reference/pip_install/#vcs-support). I'll
+See the `guide to pip installing from github repos.`__
+
+I'll
 put it on pypi soon, I swear!
+
+.. __: https://pip.pypa.io/en/stable/reference/pip_install/#vcs-support
 
 Usage
 =====
@@ -152,8 +155,10 @@ LICENSE
 =======
 
 marshmallow-select is distributed under the terms of the WTFPL,
-version 2. See
-[COPYING](https://github.com/Distribute-Inc/marshmallow-select/blob/master/COPYING).
+version 2. See COPYING_.
+
+.. _COPYING: https://github.com/Distribute-Inc/marshmallow-select/blob/master/COPYING.
+
 
 WARRANTY
 ========
