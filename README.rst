@@ -117,17 +117,24 @@ doesn't mean it's even vaguely production-ready.
 TODO
 ====
 
-0. Some simple way of detecting & reporting if the schema "covers" the
-   query (i.e. serializing with the schema will not produce additional
-   queries)
-
-1. Performance improvements: I never really bothered to cache some of
+0. Performance improvements: I never really bothered to cache some of
    the more expensive introspections. It runs on order of tens of
    milliseconds, but can push up to hundreds (when in fact it should
    probably be on the order of microseconds). This is fine when you're
    optimizing a query that should be immediate but is taking minutes
    because of k*n+1 query bugs, but can sometimes mean the difference
    between whether you can get a query down to sub-second or not.
+
+   It should also be possible to perform the necessary introspections
+   at application boot time, instead of query execution time. This is
+   in-principle possible, although would require losing some
+   flexibility.
+
+1. Some simple way of detecting & reporting if the schema "covers" the
+   query (i.e. serializing with the schema will not produce additional
+   queries). Currently I just turn on sqlalchemy engine echoing and
+   run the query and the serialization in the console and see if any
+   extra queries happen.
 
 2. Support for multi-entity queries (e.g. explicit joins of 2 models
    without existing relationships). This rarely comes up for us (most
