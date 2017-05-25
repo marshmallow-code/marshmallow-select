@@ -165,4 +165,4 @@ WARRANTY
 
 Users who believe that it's my fault if something that goes wrong with
 their software as a result of using this code should consult the case
-of `Arkell v. Pressdram`.
+of *Arkell v. Pressdram*.
