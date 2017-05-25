@@ -140,3 +140,9 @@ TODO
    without existing relationships). This rarely comes up for us (most
    of our queries which involve explicit joins are aggregations), but
    might be useful to someone.
+
+LICENSE
+=======
+
+marshmallow-select is distributed under the terms of the WTFPL,
+version 2. See [COPYING]
