@@ -121,5 +121,15 @@ TODO
    query (i.e. serializing with the schema will not produce additional
    queries)
 
-1. unlazify doesn't appear to work 100% of the time; figure out why
-   (think I fixed this).
+1. Performance improvements: I never really bothered to cache some of
+   the more expensive introspections. It runs on order of tens of
+   milliseconds, but can push up to hundreds (when in fact it should
+   probably be on the order of microseconds). This is fine when you're
+   optimizing a query that should be immediate but is taking minutes
+   because of k*n+1 query bugs, but can sometimes mean the difference
+   between whether you can get a query down to sub-second or not.
+
+2. Support for multi-entity queries (e.g. explicit joins of 2 models
+   without existing relationships). This rarely comes up for us (most
+   of our queries which involve explicit joins are aggregations), but
+   might be useful to someone.
