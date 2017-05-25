@@ -152,6 +152,11 @@ TODO
    of our queries which involve explicit joins are aggregations), but
    might be useful to someone.
 
+3. Would be nice to have some kind of metaclass mixin so that instead
+   of declaring dependent fields (like :code:`first_name`) load_only,
+   they could just be listed in the metaclass in a tuple called
+   :code:`dependent_fields` or something.
+
 Acknowledgements
 ================
 
