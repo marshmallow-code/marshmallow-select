@@ -60,6 +60,54 @@ You can also filter nested fields
     new_qry = sf(qry)
 
 
+Tips
+====
+
+marshmallow-select makes reasonable efforts to detect fields that are
+not directly on the schema. For example, if you have a model with a
+field :code:`approved` and a schema like
+
+.. code-block:: python
+
+    class FooSchema(Schema):
+        is_approved = Boolean(attribute="approved")
+
+marshmallow-select will include :code:`approved` in the list of fields
+it will fetch. Nonetheless, there is nothing realistic it can do about
+the following case
+
+.. code-block:: python
+
+    class User(BaseModel):
+        first_name = Column(String(100))
+        last_name  = Column(String(100))
+
+        @property
+        def full_name(self):
+            return ' '.join([self.first_name, self.last_name])
+
+
+    class UserSchema(Schema):
+        full_name = String()
+
+
+The solution in this case (aside from telling you to do less of that;
+we all have legacy code) is to explicitly bring these fields to the
+attention of marshmallow-select without actually adding them to the
+list of output fields
+
+.. code-block:: python
+    class UserSchema(Schema):
+        full_name = String()
+        first_name = Field(load_only=True)
+        last_name = Field(load_only=True)
+
+since marshmallow-select treats any fields on the schema as fields
+that should be fetched, even if the schema declares that they will not
+actually be serialized (if your existing schema has load_only fields
+you want marshmallow-select to not fetch, you should :code:`exclude`
+them).
+
 Notes
 =====
 
