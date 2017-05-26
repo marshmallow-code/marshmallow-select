@@ -72,6 +72,9 @@ You can also filter nested fields
 Tips
 ====
 
+Schema fields which do not map to model fields
+----------------------------------------------
+
 marshmallow-select makes reasonable efforts to detect fields that are
 not directly on the schema. For example, if you have a model with a
 field :code:`approved` and a schema like
@@ -117,6 +120,50 @@ that should be fetched, even if the schema declares that they will not
 actually be serialized (if your existing schema has load_only fields
 you want marshmallow-select to not fetch, you should :code:`exclude`
 them).
+
+Separately-added values
+-----------------------
+
+Sometimes when trying to integrate schemas into legacy code, you end
+up with particular fields which are added separately from normal
+serialization-via-schema. In other words something like:
+
+
+.. code-block:: python
+
+    # used by api resource A
+    def fetch_foos():
+        foos = read_foos_from_db()
+        return {'foos_list': [FooSchema().dump(foo) for foo in foos]}
+
+
+    # used by api resource B
+    def fetch_foos_special_case():
+        foos = read_foos_from_db()
+        dumped_foos = [FooSchema().dump(foo) for foo in foos]
+        for foo in dumped_foos:
+            foo['special_case_field'] = get_special_value()
+        return {'special_foos_list': dumped_foos}
+
+Perhaps in addition to using schemas for serialization, you also wish
+to use them to generate swagger/apispec markup. In this situation,
+marshmallow-select is perfectly happy with you doing something like:
+
+.. code-block:: python
+
+    class SpecialFooSchema(FooSchema):
+        # or whatever type get_special_value returns.
+        special_case_field = Integer()
+
+
+    # This schema could be used both to serialize both cases of Foo
+    # objects, and to filter queries for them.
+    class DualPurposeSpecialFooSchema(FooSchema):
+        special_case_field = Integer(missing=None)
+
+In other words, the marshmallow-select does not care if a field cannot
+be found. Filtering via either of the above schema when querying for
+Foo objects should be equivalent to querying with the parent schema.
 
 Notes
 =====
