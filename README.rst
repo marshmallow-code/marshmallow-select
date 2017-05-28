@@ -8,10 +8,8 @@ queries.
 Installation
 ============
 
-See the `guide to pip installing from github repos.`__
-
-I'll
-put it on pypi soon, I swear!
+:code:`pip install marshmallow-select`. Or see the
+`guide to pip installing from github repos.`__
 
 .. __: https://pip.pypa.io/en/stable/reference/pip_install/#vcs-support
 
