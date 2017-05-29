@@ -237,7 +237,9 @@ of *Arkell v. Pressdram*.
 See Also
 ========
 
-My [blog post](https://dradetsky.github.io/marshmallow-select.html)
-announcing the package. Further announcements (there'll probably be at
-least one) will be tagged
-[marshmallow-select](https://dradetsky.github.io/tags/marshmallow-select.html)
+My blog post_ announcing the package. Further announcements (there'll
+probably be at least one) will be tagged marshmallow-select_.
+
+.. _post: https://dradetsky.github.io/marshmallow-select.html
+
+.. _marshmallow-select: https://dradetsky.github.io/tags/marshmallow-select.html)
