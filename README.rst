@@ -242,4 +242,4 @@ probably be at least one) will be tagged marshmallow-select_.
 
 .. _post: https://dradetsky.github.io/marshmallow-select.html
 
-.. _marshmallow-select: https://dradetsky.github.io/tags/marshmallow-select.html)
+.. _marshmallow-select: https://dradetsky.github.io/tags/marshmallow-select.html
