@@ -223,7 +223,7 @@ LICENSE
 marshmallow-select is distributed under the terms of the WTFPL,
 version 2. See COPYING_.
 
-.. _COPYING: https://github.com/Distribute-Inc/marshmallow-select/blob/master/COPYING
+.. _COPYING: https://github.com/marshmallow-code/marshmallow-select/blob/master/COPYING
 
 
 WARRANTY
@@ -232,3 +232,12 @@ WARRANTY
 Users who believe that it's my fault if something that goes wrong with
 their software as a result of using this code should consult the case
 of *Arkell v. Pressdram*.
+
+
+See Also
+========
+
+My [blog post](https://dradetsky.github.io/marshmallow-select.html)
+announcing the package. Further announcements (there'll probably be at
+least one) will be tagged
+[marshmallow-select](https://dradetsky.github.io/tags/marshmallow-select.html)
