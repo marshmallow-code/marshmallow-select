@@ -36,5 +36,5 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Topic :: Database',
     ],
-
+    test_suite='tests',
 )

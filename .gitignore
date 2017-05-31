@@ -1,3 +1,6 @@
 marshmallow_select.egg-info
 build
 dist
+.cache
+venv
+notes.py

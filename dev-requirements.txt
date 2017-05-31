@@ -1,0 +1,7 @@
+# tools
+pytest>=3.1.0
+tox>=2.7.0
+invoke>=0.17.0
+
+# used in test
+marshmallow_sqlalchemy
