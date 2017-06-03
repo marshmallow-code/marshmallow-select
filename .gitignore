@@ -4,3 +4,4 @@ dist
 .cache
 venv
 notes.py
+debug.log
