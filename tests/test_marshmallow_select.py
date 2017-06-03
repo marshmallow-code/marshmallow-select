@@ -257,16 +257,36 @@ class TestJoining:
         """
         does it actually do it tho?
         """
+        session.commit()
+        qc_before = query_counter
+
+        qry = session.query(models.User).filter(models.User.id==instances['user_id'])
+        obj = qry.first()
+        qc_fetch_unfiltered = query_counter
+        data = detail_schema().dump(obj).data
+        qc_dump_unfiltered = query_counter
+
+        assert data == detail_out, 'unfiltered gets data right'
+
+        fetch_queries = qc_fetch_unfiltered - qc_before
+        dump_queries = qc_dump_unfiltered - qc_fetch_unfiltered
+        assert fetch_queries == 1, '1 query to fetch'
+        assert dump_queries == 3, '3 queries to dump'
+
+        session.commit()
         qc_before = query_counter
 
         qry = session.query(models.User).filter(models.User.id==instances['user_id'])
         sf = SchemaFilter(detail_schema(), unlazify=True)
         qry = sf(qry)
         obj = qry.first()
+        qc_fetch_filtered = query_counter
         data = detail_schema().dump(obj).data
-        assert data == detail_out
+        qc_dump_filtered = query_counter
 
-        qc_after = query_counter
-        num_queries = qc_after - qc_before
+        assert data == detail_out, 'filtered data correct'
 
-        assert num_queries == 1
+        filt_fetch_queries = qc_fetch_filtered - qc_before
+        filt_dump_queries = qc_dump_filtered - qc_fetch_filtered
+        assert filt_fetch_queries == 1, 'filtered: 1 to fetch'
+        assert filt_dump_queries == 0, 'filtered: 0 to dump'
