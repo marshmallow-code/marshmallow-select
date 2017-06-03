@@ -246,12 +246,15 @@ class TestJoining:
         qry = qry.options(joinedload('likes').joinedload('image').load_only('id', 'url'))
 
         obj = qry.first()
+        qc_fetch = query_counter
         data = detail_schema().dump(obj).data
-        assert data == detail_out
+        qc_dump = query_counter
+        assert data == detail_out, 'manual: data correct'
 
-        qc_after = query_counter
-        num_queries = qc_after - qc_before
-        assert num_queries == 1
+        fetch_queries = qc_fetch - qc_before
+        dump_queries = qc_dump - qc_fetch
+        assert fetch_queries == 1, 'manual: 1 to fetch'
+        assert dump_queries == 0, 'manual: 0 to dump'
 
     def test_detail(self, session, detail_schema, detail_out, models, instances):
         """
