@@ -2,20 +2,14 @@ from marshmallow.fields import (
     List,
     Nested
 )
-from sqlalchemy.orm import (
-    joinedload,
-    defaultload,
-    noload,
-    load_only,
-    class_mapper
-)
+import sqlalchemy.orm as orm
 
 
 class SchemaProjectionGenerator(object):
     def __init__(self, schema_inst, query_cls, filter_only_these=None):
         self.schema = schema_inst
         self.cls = query_cls
-        self.mapper = class_mapper(query_cls)
+        self.mapper = orm.class_mapper(query_cls)
         self.filter_only_these = filter_only_these
 
     @property
@@ -150,52 +144,54 @@ def get_next_class(mapper, name):
     return mapper.relationships[name].mapper.class_
 
 
-def project_query(qry, cfg, opt_prefix=None, loader=defaultload):
+def project_query(qry, cfg, loader):
     """
     BFSs through config tree modifying query
-
-    opt_prefix is a path from the root of up to the child we are about
-    to modify.
     """
-    def add_to_opt_prefix(old_prefix, new_name):
-        if old_prefix:
-            new_prefix = getattr(old_prefix, loader.__name__)(new_name)
-        else:
-            new_prefix = loader(new_name)
-        return new_prefix
+    def inner_projector(qry, cfg, prefix):
+        """
+        prefix is the path constructed by applying a series of load
+        strategies, as in
 
-    def project_current_depth(qry, cfg, opt_prefix):
-        load_only_opt = cfg['load_only']
-        noload_opt = cfg['noload']
-        reload_opt = cfg['reload']
+        qry.options(joinedload('foo').
+                    joinedload('bar').
+                    joinedload('baz'))
 
-        if opt_prefix:
-            qry = qry.options(opt_prefix.load_only(*load_only_opt))
-        else:
-            qry = qry.options(load_only(*load_only_opt))
+        or None if we are at the root.
+        """
+        load_only_names = cfg['load_only']
 
-        for name in noload_opt:
-            if opt_prefix:
-                qry = qry.options(opt_prefix.noload(name))
-            else:
-                qry = qry.options(noload(name))
+        qry = apply_with_prefix(qry, prefix, 'noload', '*')
 
-        for name in reload_opt:
-            reload_expr = add_to_opt_prefix(opt_prefix, name)
-            qry = qry.options(reload_expr)
+        for name, child_cfg in cfg['childs'].items():
+            qry = project_child(qry, child_cfg, prefix, name)
 
+        for name in load_only_names:
+            qry = apply_with_prefix(qry, prefix, 'undefer', name)
         return qry
 
-    projected_qry = qry
+    def project_child(qry, cfg, prefix, name):
+        new_prefix = extend_prefix(prefix, name)
+        return inner_projector(qry, cfg, new_prefix)
 
-    for name, child_cfg in cfg['childs'].items():
-        child_opt_prefix = add_to_opt_prefix(opt_prefix, name)
-        projected_qry = project_query(projected_qry,
-                                      child_cfg,
-                                      child_opt_prefix)
+    def extend_prefix(prefix, name):
+        if prefix:
+            new_prefix = getattr(prefix, loader.__name__)(name)
+        else:
+            new_prefix = loader(name)
+        return new_prefix
 
-    projected_qry = project_current_depth(projected_qry, cfg, opt_prefix)
-    return projected_qry
+    def apply_with_prefix(qry, prefix, method_name, arg):
+        if prefix:
+            method = getattr(prefix, method_name)
+            new_qry = qry.options(method(arg))
+        else:
+            method = getattr(orm, method_name)
+            new_qry = qry.options(method(arg))
+        return new_qry
+
+    new_qry = inner_projector(qry, cfg, None)
+    return new_qry
 
 
 class SchemaFilter(object):
@@ -206,9 +202,9 @@ class SchemaFilter(object):
             self.schema_inst = schema
 
         if unlazify:
-            self.loader = joinedload
+            self.loader = orm.joinedload
         else:
-            self.loader = defaultload
+            self.loader = orm.defaultload
 
     def __call__(self, qry, cls=None):
         if not cls:
