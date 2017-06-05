@@ -202,13 +202,6 @@ def detail_out():
 
 
 class TestJoining:
-    def test_meta(self):
-        assert(True)
-
-    def test_meta1(self):
-        print('zomg')
-        assert(True)
-
     def test_qc(self, session, models, instances):
         """
         qc ok
