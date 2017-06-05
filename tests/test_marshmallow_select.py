@@ -63,7 +63,6 @@ def models(Base):
 
     class Image(Base):
         url = Column(String(100))
-        created_at = Column(DateTime, default=sa.func.now())
         is_default = Column(Boolean, default=False)
 
         user_id = Column(Integer, ForeignKey('user.id'))
@@ -73,7 +72,6 @@ def models(Base):
     class Like(Base):
         user_id = Column(Integer, ForeignKey('user.id'))
         image_id = Column(Integer, ForeignKey('image.id'))
-        created_at = Column(DateTime, default=sa.func.now())
 
         user = relationship('User', back_populates='likes')
         image = relationship('Image')
