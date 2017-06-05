@@ -7,7 +7,7 @@ from invoke import task
 @task
 def test(ctx):
     import pytest
-    retcode = pytest.main([])
+    retcode = pytest.main(['-v'])
     sys.exit(retcode)
 
 
