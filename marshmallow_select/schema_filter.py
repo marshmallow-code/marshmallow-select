@@ -5,6 +5,29 @@ from marshmallow.fields import (
 import sqlalchemy.orm as orm
 
 
+class SchemaFilter(object):
+    def __init__(self, schema, unlazify=False):
+        if isinstance(schema, type):
+            self.schema_inst = schema()
+        else:
+            self.schema_inst = schema
+
+        if unlazify:
+            self.loader = orm.joinedload
+        else:
+            self.loader = orm.defaultload
+
+    def __call__(self, qry, cls=None):
+        if not cls:
+            cls = qry._entity_zero().class_
+
+        projector = SchemaProjectionGenerator(self.schema_inst, cls)
+        projection_cfg = projector.config
+
+        new_qry = project_query(qry, projection_cfg, loader=self.loader)
+        return new_qry
+
+
 class SchemaProjectionGenerator(object):
     def __init__(self, schema_inst, query_cls, filter_only_these=None):
         self.schema = schema_inst
@@ -192,26 +215,3 @@ def project_query(qry, cfg, loader):
 
     new_qry = inner_projector(qry, cfg, None)
     return new_qry
-
-
-class SchemaFilter(object):
-    def __init__(self, schema, unlazify=False):
-        if isinstance(schema, type):
-            self.schema_inst = schema()
-        else:
-            self.schema_inst = schema
-
-        if unlazify:
-            self.loader = orm.joinedload
-        else:
-            self.loader = orm.defaultload
-
-    def __call__(self, qry, cls=None):
-        if not cls:
-            cls = qry._entity_zero().class_
-
-        projector = SchemaProjectionGenerator(self.schema_inst, cls)
-        projection_cfg = projector.config
-
-        new_qry = project_query(qry, projection_cfg, loader=self.loader)
-        return new_qry
