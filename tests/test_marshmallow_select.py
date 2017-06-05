@@ -55,6 +55,7 @@ def models(Base):
 
         images = relationship('Image', back_populates='user')
         default_image = relationship('Image',
+                                     uselist=False,
                                      primaryjoin=(
                                          "and_(User.id==Image.user_id, "
                                          "Image.is_default==True)"
@@ -111,6 +112,7 @@ def schemas(shallow_schemas):
     class UserSchema(shallow_schemas.ShallowUserSchema):
         images = List(Nested('ImageSchema'))
         likes = List(Nested('LikeSchema'))
+        default_image = Nested('ImageSchema')
 
     class ImageSchema(shallow_schemas.ShallowImageSchema):
         user = Nested('UserSchema')
