@@ -132,7 +132,7 @@ def schemas(shallow_schemas):
 
 
 @pytest.fixture()
-def detail_schema(schemas):
+def all_detail_schemas(schemas):
     class ImageForUserDetailSchema(schemas.ImageSchema):
         class Meta:
             fields = ['id', 'url']
@@ -150,7 +150,18 @@ def detail_schema(schemas):
         class Meta:
             exclude = ['default_image']
 
-    return UserDetailSchema
+    class _detail_schemas(object):
+        def __init__(self):
+            self.ImageForUserDetailSchema = ImageForUserDetailSchema
+            self.LikeForUserDetailSchema = LikeForUserDetailSchema
+            self.UserDetailSchema = UserDetailSchema
+
+    return _detail_schemas()
+
+
+@pytest.fixture()
+def detail_schema(all_detail_schemas):
+    return all_detail_schemas.UserDetailSchema
 
 
 @pytest.fixture()
