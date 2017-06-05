@@ -135,15 +135,13 @@ def schemas(shallow_schemas):
 def detail_schema(schemas):
     class ImageForUserDetailSchema(schemas.ImageSchema):
         class Meta:
-            # fields = ['id', 'url']
-            fields = ['url']
+            fields = ['id', 'url']
 
     class LikeForUserDetailSchema(schemas.LikeSchema):
         image = Nested(ImageForUserDetailSchema)
 
         class Meta:
             fields = ['id', 'image']
-            # fields = ['image']
 
     class UserDetailSchema(schemas.UserSchema):
         images = List(Nested(ImageForUserDetailSchema))
@@ -192,12 +190,14 @@ def instances(models, session):
 
 @pytest.fixture()
 def detail_out():
-    data = {'email': 'c',
-            'first_name': 'a',
-            'likes': [{'image': {'url': 'goatse.cx/giver.jpg'}, 'id': 1}],
-            'images': [{'url': 'goatse.cx/receiver.jpg'}],
-            'last_name': 'b',
-            'id': 1}
+    data = {
+        'id': 1,
+        'first_name': 'a',
+        'last_name': 'b',
+        'email': 'c',
+        'images': [{'id': 1, 'url': 'goatse.cx/receiver.jpg'}],
+        'likes': [{'id': 1, 'image': {'id': 2, 'url': 'goatse.cx/giver.jpg'}}]
+    }
     return data
 
 
