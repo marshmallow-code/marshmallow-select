@@ -7,6 +7,9 @@ from invoke import task
 @task
 def test(ctx):
     import pytest
+    # make output verbose b/c not enough tests yet to be a problem,
+    # and it helps me avoid getting confused about what's being run
+    # while developing.
     retcode = pytest.main(['-v'])
     sys.exit(retcode)
 
