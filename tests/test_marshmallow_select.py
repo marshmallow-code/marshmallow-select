@@ -225,18 +225,11 @@ class TestJoining:
         sort of; it's not exaclty how i implemented the walk (maybe it
         should have been tho)
         """
-        from sqlalchemy.orm import joinedload
-
         qc_before = query_counter
 
         qry = session.query(models.User).filter(models.User.id==instances['user_id'])
 
-        qry = qry.options(joinedload('images').defer('*'))
-        qry = qry.options(joinedload('likes').defer('*'))
-        qry = qry.options(joinedload('likes').joinedload('image').defer('*'))
-        qry = qry.options(joinedload('images').load_only('id', 'url'))
-        qry = qry.options(joinedload('likes').load_only('id'))
-        qry = qry.options(joinedload('likes').joinedload('image').load_only('id', 'url'))
+        qry = manually_project(qry)
 
         obj = qry.first()
         qc_fetch = query_counter
@@ -286,3 +279,29 @@ class TestJoining:
         filt_dump_queries = qc_dump_filtered - qc_fetch_filtered
         assert filt_fetch_queries == 1, 'filtered: 1 to fetch'
         assert filt_dump_queries == 0, 'filtered: 0 to dump'
+
+
+def manually_project(qry):
+    from sqlalchemy.orm import (
+        joinedload,
+        noload,
+        load_only,
+    )
+
+    qry = qry.options(noload('*'))
+
+    qry = qry.options(joinedload('images'))
+    qry = qry.options(joinedload('images').noload('*'))
+    qry = qry.options(joinedload('images').load_only('id', 'url'))
+
+    qry = qry.options(joinedload('likes'))
+    qry = qry.options(joinedload('likes').noload('*'))
+
+    qry = qry.options(joinedload('likes').joinedload('image'))
+    qry = qry.options(joinedload('likes').joinedload('image').noload('*'))
+    qry = qry.options(joinedload('likes').joinedload('image').load_only('id', 'url'))
+
+    qry = qry.options(joinedload('likes').load_only('id'))
+
+    qry = qry.options(load_only('id', 'first_name', 'last_name', 'email'))
+    return qry
