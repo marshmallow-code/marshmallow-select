@@ -1,3 +1,4 @@
+from marshmallow import Schema
 from marshmallow.fields import (
     List,
     Nested
@@ -59,7 +60,9 @@ class SchemaProjectionGenerator(object):
         if next_schema is None or next_class is None:
             return None
         else:
-            return cls(next_schema(), next_class).config
+            spg_obj = cls(ensure_instance(next_schema),
+                          next_class)
+            return spg_obj.config
 
     @property
     def reload_field_names(self):
@@ -165,6 +168,23 @@ def get_next_schema(schema, name):
 
 def get_next_class(mapper, name):
     return mapper.relationships[name].mapper.class_
+
+
+def ensure_instance(schema):
+    """
+    various methods expect instances of schema, but sometimes
+    introspections yield classes (not totally sure why). but we can't
+    just blindly call ProbablyAClass() without sometimes getting
+    not-callable errors.
+    """
+    if isinstance(schema, Schema):
+        return schema
+    # TODO(dmr, 2017-06-07): confirm that is of type
+    # schema-class-thing so errors are more localized
+    elif isinstance(schema, type):
+        return schema()
+    else:
+        raise ValueError('lolwut:', schema)
 
 
 def project_query(qry, cfg, loader):
