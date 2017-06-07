@@ -159,8 +159,33 @@ def all_detail_schemas(schemas):
 
 
 @pytest.fixture()
+def all_list_schemas(schemas):
+    class ImageForUserListEltSchema(schemas.ImageSchema):
+        class Meta:
+            fields = ['id', 'url']
+
+    class UserListEltSchema(schemas.UserSchema):
+        default_image = Nested(ImageForUserListEltSchema)
+
+        class Meta:
+            fields = ['id', 'first_name', 'default_image']
+
+    class _list_schemas(object):
+        def __init__(self):
+            self.ImageForUserListEltSchema = ImageForUserListEltSchema
+            self.UserListEltSchema = UserListEltSchema
+
+    return _list_schemas()
+
+
+@pytest.fixture()
 def detail_schema(all_detail_schemas):
     return all_detail_schemas.UserDetailSchema
+
+
+@pytest.fixture()
+def list_schema(all_list_schemas):
+    return all_list_schemas.UserListEltSchema
 
 
 @pytest.fixture()
@@ -193,7 +218,10 @@ def instances(models, session):
 
     session.flush()
     instance_data = {
-        'user_id': u.id
+        'user_id': u.id,
+        'user0_img_id': i0.id,
+        'user1_img_id': i1.id,
+        'other_img_id': i2.id,
     }
     return instance_data
 
@@ -208,6 +236,30 @@ def detail_out():
         'images': [{'id': 1, 'url': 'goatse.cx/receiver.jpg'}],
         'likes': [{'id': 1, 'image': {'id': 2, 'url': 'goatse.cx/giver.jpg'}}]
     }
+    return data
+
+
+@pytest.fixture()
+def list_out():
+    data = [
+        {
+            'id': 1,
+            'first_name': 'a',
+            'default_image': {
+                'url': 'goatse.cx/receiver.jpg',
+                'id': 1
+            }
+        },
+        {
+            'id': 2,
+            'first_name': 'd',
+            'default_image': {
+                'url': 'goatse.cx/giver.jpg',
+                'id': 2
+            }
+        }
+    ]
+
     return data
 
 
@@ -289,6 +341,57 @@ class TestJoining:
         filt_dump_queries = qc_dump_filtered - qc_fetch_filtered
         assert filt_fetch_queries == 1, 'filtered: 1 to fetch'
         assert filt_dump_queries == 0, 'filtered: 0 to dump'
+
+    def test_list(self, session, list_schema, list_out, models, instances):
+        session.commit()
+        qc_before = query_counter
+
+        qry = session.query(models.User)
+        obj = qry.all()
+        qc_fetch_unfiltered = query_counter
+        data = list_schema(many=True).dump(obj).data
+        qc_dump_unfiltered = query_counter
+
+        assert data == list_out, 'unfiltered gets data right'
+
+        fetch_queries = qc_fetch_unfiltered - qc_before
+        dump_queries = qc_dump_unfiltered - qc_fetch_unfiltered
+        assert fetch_queries == 1, '1 query to fetch'
+        assert dump_queries == 2, '2 queries to dump'
+
+        session.commit()
+        qc_before = query_counter
+
+        qry = session.query(models.User)
+        sf = SchemaFilter(list_schema(), unlazify=True)
+        qry = sf(qry)
+        obj = qry.all()
+        qc_fetch_filtered = query_counter
+        data = list_schema(many=True).dump(obj).data
+        qc_dump_filtered = query_counter
+
+        assert data == list_out, 'filtered gets data right'
+
+        fetch_queries = qc_fetch_filtered - qc_before
+        dump_queries = qc_dump_filtered - qc_fetch_filtered
+        assert fetch_queries == 1, 'filtered: 1 query to fetch'
+        assert dump_queries == 0, 'filtered: 0 queries to dump'
+
+        fetched_id_0 = instances['user0_img_id']
+        fetched_id_1 = instances['user1_img_id']
+        unfetched_id = instances['other_img_id']
+
+        qc0 = query_counter
+        session.query(models.Image).get(fetched_id_0).id
+        qc1 = query_counter
+        session.query(models.Image).get(fetched_id_1).id
+        qc2 = query_counter
+        session.query(models.Image).get(unfetched_id).id
+        qc3 = query_counter
+
+        assert (qc1 - qc0) == 0, 'already have user0 img'
+        assert (qc2 - qc1) == 0, 'already have user0 img'
+        assert (qc3 - qc2) == 1, 'did not get other img'
 
 
 def manually_project(qry):
