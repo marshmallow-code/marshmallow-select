@@ -1,3 +1,4 @@
+import marshmallow
 from marshmallow.fields import (
     List,
     Nested
@@ -21,6 +22,14 @@ from sqlalchemy.orm import (
     relationship,
     sessionmaker
 )
+
+MARSHMALLOW_VERSION_INFO = tuple(
+    [int(part) for part in marshmallow.__version__.split('.') if part.isdigit()]
+)
+
+
+def unpack(return_value):
+    return return_value.data if MARSHMALLOW_VERSION_INFO[0] < 3 else return_value
 
 query_counter = 0
 
@@ -295,7 +304,7 @@ class TestJoining:
 
         obj = qry.first()
         qc_fetch = query_counter
-        data = detail_schema().dump(obj).data
+        data = unpack(detail_schema().dump(obj))
         qc_dump = query_counter
         assert data == detail_out, 'manual: data correct'
 
@@ -314,7 +323,7 @@ class TestJoining:
         qry = session.query(models.User).filter(models.User.id==instances['user_id'])
         obj = qry.first()
         qc_fetch_unfiltered = query_counter
-        data = detail_schema().dump(obj).data
+        data = unpack(detail_schema().dump(obj))
         qc_dump_unfiltered = query_counter
 
         assert data == detail_out, 'unfiltered gets data right'
@@ -332,7 +341,7 @@ class TestJoining:
         qry = sf(qry)
         obj = qry.first()
         qc_fetch_filtered = query_counter
-        data = detail_schema().dump(obj).data
+        data = unpack(detail_schema().dump(obj))
         qc_dump_filtered = query_counter
 
         assert data == detail_out, 'filtered data correct'
@@ -349,7 +358,7 @@ class TestJoining:
         qry = session.query(models.User)
         obj = qry.all()
         qc_fetch_unfiltered = query_counter
-        data = list_schema(many=True).dump(obj).data
+        data = unpack(list_schema(many=True).dump(obj))
         qc_dump_unfiltered = query_counter
 
         assert data == list_out, 'unfiltered gets data right'
@@ -367,7 +376,7 @@ class TestJoining:
         qry = sf(qry)
         obj = qry.all()
         qc_fetch_filtered = query_counter
-        data = list_schema(many=True).dump(obj).data
+        data = unpack(list_schema(many=True).dump(obj))
         qc_dump_filtered = query_counter
 
         assert data == list_out, 'filtered gets data right'
