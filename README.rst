@@ -2,9 +2,9 @@
 marshmallow-select
 ******************
 
-.. image:: https://img.shields.io/badge/marshmallow-3-blue.svg
+.. image:: https://badgen.net/badge/marshmallow/2,3?list=1
     :target: https://marshmallow.readthedocs.io/en/latest/upgrading.html
-    :alt: marshmallow 3 compatible
+    :alt: marshmallow 2/3 compatible
 
 Use marshmallow schemas to generate select clauses for sqlalchemy
 queries.
